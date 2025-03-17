@@ -1,0 +1,45 @@
+{% extends "student_layout.html" %}
+
+{% block page_title %}My Courses{% endblock %}
+
+{% block main_content %}
+<div class="courses-container">
+    {% if applications %}
+        {% for application in applications %}
+        <div class="program-section mb-4">
+            <h3 class="program-title">{{ application.program.name }}</h3>
+            <p class="program-level">{{ application.level|title }}</p>
+            
+            {% set program_courses = courses|selectattr("program_id", "equalto", application.program_id)|list %}
+            
+            {% if program_courses %}
+                {% for semester in [1, 2] %}
+                <div class="semester-section">
+                    <h4 class="semester-title">Semester {{ semester }}</h4>
+                    <div class="courses-grid">
+                        {% for course in program_courses if course.semester == semester %}
+                        <div class="course-card">
+                            <div class="course-header">
+                                <i class="fas fa-book-open course-icon"></i>
+                                <h5 class="course-name">{{ course.name }}</h5>
+                                <p class="course-name-ar">{{ course.name_ar }}</p>
+                            </div>
+                            {% if course.description %}
+                            <p class="course-description">{{ course.description }}</p>
+                            {% endif %}
+                        </div>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-muted">No courses available for this program yet.</p>
+            {% endif %}
+        </div>
+        {% endfor %}
+    {% else %}
+        <div class="alert alert-info">
+            <p>You don't have any active programs yet. Please check your applications status.</p>
+        </div>
+    {% endif %}
+</div>
